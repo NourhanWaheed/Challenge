@@ -1,4 +1,5 @@
-import React, { Component } from "react";
+import React from 'react';
+import Profile from "./Profile";
 class Login extends React.Component {
     constructor() {
         super();
@@ -6,11 +7,7 @@ class Login extends React.Component {
         this.state = {
             _UserName: "",
             _Password: "",
-            AdminData: {
-                Name: "Nour",
-                Password: 123
-            },
-            AccessDenied: true
+            accessDenied: false
         }
 
         this.handlerInput = (e) => {
@@ -21,62 +18,47 @@ class Login extends React.Component {
 
         this.onSubMitHandler = (e) => {
             e.preventDefault();
-            console.log("Submitted");
-            //get values ==>inputs
-            let loginObjectUser = {
-                Name: this.state._UserName,
-                Pass: this.state._Password,
-            };
-            //Save object ==>session
-            //check ==>adminObjectData===>sever
-            //redirect to App ==>Admin
-            if (
-                this.state.AdminData.Name == this.state._UserName &&
-                this.state.AdminData.Password == this.state._Password
-            ) {
-                sessionStorage.setItem('AdminData', JSON.stringify(loginObjectUser));
-                this.props.AccessFunc(true);
-            }
-            else
-                this.setState({
-                    AccessDenied: false
-                });
 
+            if(this.state._UserName !="" && this.state._Password != "")
+            {
+                let loginObjectUser = {
+                    Name: this.state._UserName,
+                    Pass: this.state._Password,
+                };
+    
+                sessionStorage.setItem('AdminData', JSON.stringify(loginObjectUser));
+                this.setState({
+                    accessDenied:true
+                })
+                this.props.BOMProps.history.push("/details");
+            }
         };
     }
 
     render() {
-        if (this.state.AccessDenied == false)
-            return (
-                <>
-                    <form onSubmit={this.onSubMitHandler}>
-                        <div class="mb-3">
-                            <label class="form-label">User Name</label>
-                            <input type="text" class="form-control" name="_UserName" value={this.state._UserName} onChange={this.handlerInput} />
-                        </div>
-                        <div class="mb-3">
-                            <label for="exampleInputPassword1" class="form-label">Password</label>
-                            <input type="password" class="form-control" id="exampleInputPassword1" name="_Password" value={this.state._Password} onChange={this.handlerInput} />
-                        </div>
-                        <button type="submit" class="btn btn-primary">Submit</button>
-                    </form>
-                    <div class="text-bg-danger">Access Not Vaild</div>
-                </>
 
+        if (this.state.accessDenied == false) {
+            return (
+                <form onSubmit={this.onSubMitHandler}>
+                    <div class="mb-3">
+                        <label class="form-label">User Name</label>
+                        <input type="text" class="form-control" name="_UserName" value={this.state._UserName} onChange={this.handlerInput} />
+                    </div>
+                    <div class="mb-3">
+                        <label for="exampleInputPassword1" class="form-label">Password</label>
+                        <input type="password" class="form-control" id="exampleInputPassword1" name="_Password" value={this.state._Password} onChange={this.handlerInput} />
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
             );
-        return (
-            <form onSubmit={this.onSubMitHandler}>
-                <div class="mb-3">
-                    <label class="form-label">User Name</label>
-                    <input type="text" class="form-control" name="_UserName" value={this.state._UserName} onChange={this.handlerInput} />
-                </div>
-                <div class="mb-3">
-                    <label for="exampleInputPassword1" class="form-label">Password</label>
-                    <input type="password" class="form-control" id="exampleInputPassword1" name="_Password" value={this.state._Password} onChange={this.handlerInput} />
-                </div>
-                <button type="submit" class="btn btn-primary">Submit</button>
-            </form>
-        );
+        }
+        else
+        {
+            return(
+               <Profile userData={this.state}/>
+            );
+        }
+
 
 
     }
